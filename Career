@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>キャリア戦略インフォグラフィック</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <!-- 
+    Chosen Color Palette: Energetic & Playful
+    Primary Colors: #FF9F1C (Orange), #2EC4B6 (Teal), #FFBF69 (Lighter Orange/Yellow)
+    Background: #FDFAF6 (Off-white/Cream)
+    Main Text: #073B4C (Dark Teal/Blue)
+    Heading Text: #540D6E (Dark Purple)
+    -->
+
+    <!--
+    Infographic Narrative & Structure Plan:
+    1.  Section 1: Introduction/Hook - "A Career Journey in Tech & Future Aspirations"
+    2.  Section 2: Career Trajectory & Achievements - Timeline of roles, COINJINJA revenue/profit chart.
+    3.  Section 3: Core Strengths Unveiled - Radar chart of key strengths.
+    4.  Section 4: Future Vision & Ambition - Career axis flow, 10-year company goal.
+    5.  Section 5: Bridging the Gap - Current challenges.
+    6.  Section 6: Key Questions for the Future - Advice sought.
+    -->
+
+    <!--
+    Visualization Choices & Justifications (Confirming NO SVG, NO MERMAID JS):
+
+    1.  Section 1: Introduction
+        * Data: Title/Intro
+        * Goal: Inform
+        * Visualization: Large Text, Unicode Icon (✨)
+        * Justification: Direct, engaging.
+        * Method: HTML, Tailwind.
+        * NO SVG, NO MERMAID JS.
+
+    2.  Section 2: Career Trajectory
+        * Data: Roles (Microsoft, HashPort, COINJINJA), Durations, COINJINJA Revenue/Profit.
+        * Goal: Change, Inform.
+        * Visualization: 
+            * Timeline: HTML/CSS with Tailwind.
+            * COINJINJA Revenue/Profit: Grouped Bar Chart (Chart.js, Canvas).
+        * Justification: Timeline for progression, Bar chart for clear financial comparison.
+        * Method: HTML/CSS, Chart.js (Canvas).
+        * NO SVG, NO MERMAID JS.
+
+    3.  Section 3: Core Strengths
+        * Data: B2B Sales, Zero-to-one, Client Work, English, Adaptability (self-assessed proficiency), Driving Forces.
+        * Goal: Compare, Inform.
+        * Visualization: 
+            * Strengths List: HTML/CSS with Tailwind.
+            * Driving Forces: Styled Text Block (HTML/CSS with Tailwind).
+        * Justification: Replaced Radar chart with text to emphasize qualitative aspects of driving forces.
+        * Method: HTML/CSS.
+        * NO SVG, NO MERMAID JS.
+
+    4.  Section 4: Future Vision
+        * Data: Career Axis elements, 10-year company goal.
+        * Goal: Organize, Inform.
+        * Visualization:
+            * Career Axis: Flow-like diagram (HTML/CSS with Tailwind, Unicode arrows).
+            * 10-Year Goal: Large Text / "Big Number" style.
+        * Justification: Flow for interconnected concepts, Big Number for impact.
+        * Method: HTML/CSS, Tailwind.
+        * NO SVG, NO MERMAID JS.
+
+    5.  Section 5: Bridging the Gap
+        * Data: Current work situation (Gap 1), Experience/Prestige (Gap 2).
+        * Goal: Inform.
+        * Visualization: Styled Callout Boxes/Cards (HTML/CSS with Tailwind, Unicode icons ⚠️).
+        * Justification: Highlights challenges clearly.
+        * Method: HTML/CSS, Tailwind.
+        * NO SVG, NO MERMAID JS.
+
+    6.  Section 6: Key Questions
+        * Data: Questions about career direction, similar roles, next steps.
+        * Goal: Inform.
+        * Visualization: Bulleted List in a styled card (HTML/CSS with Tailwind, Unicode icon ❓).
+        * Justification: Clear, concise presentation of questions.
+        * Method: HTML/CSS, Tailwind.
+        * NO SVG, NO MERMAID JS.
+    -->
+
+    <style>
+        body {
+            background-color: #FDFAF6;
+            font-family: 'Noto Sans JP', 'Roboto', sans-serif;
+            color: #073B4C;
+        }
+        .main-title { color: #540D6E; }
+        .section-title { color: #540D6E; border-bottom: 2px solid #FF9F1C; }
+        .card {
+            background-color: white;
+            border-radius: 0.5rem; /* rounded-lg */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
+            margin-bottom: 1.5rem; /* mb-6 */
+            padding: 1.5rem; /* p-6 */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px; /* Adjust as needed, e.g., max-w-xl or max-w-2xl */
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px; /* Base height */
+            max-height: 400px; /* Max height */
+        }
+        @media (min-width: 768px) { /* md breakpoint */
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .timeline-item {
+            position: relative;
+            padding-bottom: 2rem;
+            padding-left: 2.5rem; 
+        }
+        .timeline-item:last-child {
+            padding-bottom: 0;
+        }
+        .timeline-marker {
+            position: absolute;
+            left: 0;
+            top: 0.25rem;
+            width: 1.25rem; /* w-5 */
+            height: 1.25rem; /* h-5 */
+            border-radius: 9999px; /* rounded-full */
+            background-color: #2EC4B6; /* Teal */
+            border: 2px solid white;
+        }
+        .timeline-line {
+            position: absolute;
+            left: 0.5rem; /* Adjust to center with marker */
+            top: 0.25rem;
+            bottom: 0;
+            width: 2px; /* border-l-2 or similar */
+            background-color: #2EC4B6; /* Teal */
+        }
+        .timeline-item:last-child .timeline-line {
+            display: none;
+        }
+        .flow-arrow {
+            font-size: 1.5em;
+            color: #FF9F1C; /* Orange */
+            margin: 0 0.5rem;
+        }
+        .strength-icon {
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+            color: #2EC4B6; /* Teal */
+        }
+        .gap-icon {
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+            color: #FF9F1C; /* Orange */
+        }
+         .question-icon {
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+            color: #540D6E; /* Purple */
+        }
+        .driving-force-box {
+            background-color: #FFF3CD; /* Lighter Orange/Yellow */
+            border: 2px solid #FFBF69; /* Lighter Orange/Yellow */
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+        .driving-force-box p {
+            font-size: 1.125rem; /* text-lg */
+            font-weight: 600; /* font-semibold */
+            color: #B38F00; /* Darker shade of yellow for contrast */
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div class="container mx-auto p-4 md:p-8 max-w-5xl">
+
+        <section id="career-trajectory" class="mb-12">
+            <h2 class="text-2xl md:text-3xl font-bold section-title mb-6 pb-2">1. キャリアの軌跡と実績</h2>
+            <div class="card">
+                <p class="mb-6 text-gray-700" style="color: #073B4C;">これまでのキャリアパスは、大手企業での営業経験から始まり、スタートアップ環境での新規事業開発へと展開してきました。特に、ゼロからサービスを立ち上げ、事業を成長させた経験は大きな財産です。</p>
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold mb-4" style="color: #540D6E;">職務経歴タイムライン</h3>
+                    <div class="relative">
+                        <div class="timeline-item">
+                            <div class="timeline-marker"></div>
+                            <div class="timeline-line"></div>
+                            <h4 class="font-bold text-lg" style="color: #073B4C;">マイクロソフト</h4>
+                            <p class="text-sm text-gray-500" style="color: #073B4C;">アカウントマネージャー (4年半)</p>
+                            <p class="mt-1 text-gray-700" style="color: #073B4C;">エンタープライズ営業の基礎、大企業間折衝を習得。</p>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-marker"></div>
+                            <div class="timeline-line"></div>
+                            <h4 class="font-bold text-lg" style="color: #073B4C;">株式会社HashPort</h4>
+                            <p class="text-sm text-gray-500" style="color: #073B4C;">事業開発 (7ヶ月)</p>
+                            <p class="mt-1 text-gray-700" style="color: #073B4C;">NFTサービスの新規開発営業。サービスPdM、製品開発も経験。事業ピボットによる挫折も経験。</p>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-marker"></div>
+                            <h4 class="font-bold text-lg" style="color: #073B4C;">株式会社COINJINJA</h4>
+                            <p class="text-sm text-gray-500" style="color: #073B4C;">事業開発 (3年) → 執行役員</p>
+                            <p class="mt-1 text-gray-700" style="color: #073B4C;">法人向けNFTサービス（コンサル＋受託開発）を立ち上げ。マーケ、アライアンス、セールス、PMOを経験。</p>
+                            <p class="mt-1 font-semibold" style="color: #2EC4B6;">リード0から初年度売上1億円/利益1,000万円、次年度売上3億円/利益4,000万円を達成。</p>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-4" style="color: #540D6E;">COINJINJA社での業績 (売上・利益)</h3>
+                     <p class="mb-4 text-gray-700" style="color: #073B4C;">COINJINJA社では、法人向け事業をゼロから立ち上げ、短期間で顕著な成果を上げることができました。以下のグラフは、初年度と次年度の売上および利益（億円単位）を示しています。</p>
+                    <div class="chart-container h-80 md:h-96">
+                        <canvas id="coinjinjaPerformanceChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="core-strengths" class="mb-12">
+            <h2 class="text-2xl md:text-3xl font-bold section-title mb-6 pb-2">2. 私のコア・ストレングスと原動力</h2>
+            <div class="card">
+                <p class="mb-6 text-gray-700" style="color: #073B4C;">マイクロソフト退社後、特にスタートアップ環境で働く中で、自身の強みが明確になりました。これらの強みを活かし、さらなる価値貢献を目指します。</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                    <div>
+                        <h3 class="text-xl font-semibold mb-4" style="color: #540D6E;">明確になった強み</h3>
+                        <ul class="space-y-3">
+                            <li class="flex items-center"><span class="strength-icon">💼</span><strong>「法人向け営業」</strong>：一定の関係構築、課題深掘り、交渉、筋論を体得</li>
+                            <li class="flex items-center"><span class="strength-icon">🌱</span><strong>「ゼロイチ新規開拓営業」</strong>：施策のPDCA回転と気合いの両輪</li>
+                            <li class="flex items-center"><span class="strength-icon">🤝</span><strong>「クライアントワーク」</strong>：他人の役に立つことが好き</li>
+                            <li class="flex items-center"><span class="strength-icon">🌐</span><strong>「英語」</strong>：会話可能</li>
+                            <li class="flex items-center"><span class="strength-icon">🔄</span><strong>「ソフトウェア」</strong>：2~4千万円規模の受託開発案件での要件定義/設計/PMO経験</li>
+                        </ul>
+                    </div>
+                    <div class="driving-force-box">
+                        <h3 class="text-xl font-semibold mb-4" style="color: #B38F00;">私の原動力</h3>
+                        <p>
+                            クライアントやチームの仲間と<br>
+                            難局を乗り越えること
+                        </p>
+                        <p class="mt-4">
+                            それによるインパクトが<br>
+                            反復受注や売上数字に<br>
+                            目に見えて現れること
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="future-vision" class="mb-12">
+            <h2 class="text-2xl md:text-3xl font-bold section-title mb-6 pb-2">3. 中長期的なキャリアの方向性</h2>
+            <div class="card">
+                 <p class="mb-6 text-gray-700" style="color: #073B4C;">これまでの経験と強みを掛け合わせ、特定の領域で専門性を高め、将来的には自身の事業を立ち上げることを目指しています。</p>
+                <h3 class="text-xl font-semibold mb-2" style="color: #540D6E;">キャリアの軸</h3>
+                <p class="mb-4 text-gray-700" style="color: #073B4C;">以下の5つの要素をキャリアの軸として捉えています。</p>
+                <div class="flex flex-wrap items-center justify-center bg-gray-50 p-4 rounded-md mb-6">
+                    <span class="font-semibold text-lg m-2 p-2 bg-orange-100 text-orange-700 rounded" style="background-color: #FFE6B3; color: #B35900;">営業</span>
+                    <span class="flow-arrow">-</span>
+                    <span class="font-semibold text-lg m-2 p-2 bg-teal-100 text-teal-700 rounded" style="background-color: #D9F2F0; color: #007366;">ゼロイチ新規開拓</span>
+                    <span class="flow-arrow">-</span>
+                    <span class="font-semibold text-lg m-2 p-2 bg-yellow-100 text-yellow-700 rounded" style="background-color: #FFF3CD; color: #B38F00;">エンタープライズ法人向けサービス</span>
+                    <span class="flow-arrow">-</span>
+                    <span class="font-semibold text-lg m-2 p-2 bg-purple-100 text-purple-700 rounded" style="background-color: #E9D8FD; color: #540D6E;">ITソフトウェア</span>
+                    <span class="flow-arrow">-</span>
+                    <span class="font-semibold text-lg m-2 p-2 bg-red-100 text-red-700 rounded" style="background-color: #FFD9D9; color: #B30000;">英語</span>
+                </div>
+                
+                <h3 class="text-xl font-semibold mb-2" style="color: #540D6E;">目標と将来の展望</h3>
+                <p class="mb-2 text-gray-700" style="color: #073B4C;">これらの軸で実績を積み上げ、自身の商圏を拡大したいと考えています（サラリーマン/独立問わず）。会社所属か社長かは重要ではなく、部下を持ち責任範囲を広げることに注力します。</p>
+                <div class="text-center p-6 border-2 border-dashed rounded-lg" style="border-color: #FF9F1C;">
+                    <p class="text-2xl font-bold" style="color: #540D6E;">長期的には <span style="color: #FF9F1C;">10年以内</span> を目処に...</p>
+                    <p class="text-xl mt-2" style="color: #073B4C;">「<strong style="color: #2EC4B6;">外資ITスタートアップの日本市場進出支援</strong>」</p>
+                    <p class="text-lg" style="color: #073B4C;">のような領域で「お声がかかる人」になりたい。</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="bridging-the-gap" class="mb-12">
+            <h2 class="text-2xl md:text-3xl font-bold section-title mb-6 pb-2">4. 現状と理想のギャップ</h2>
+            <div class="card">
+                <p class="mb-6 text-gray-700" style="color: #073B4C;">理想のキャリアを追求する上で、現在いくつかのギャップが存在します。これらの課題を認識し、克服していく必要があります。</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="p-4 border rounded-lg" style="border-color: #FFBF69;">
+                        <h3 class="text-lg font-semibold mb-2 flex items-center" style="color: #540D6E;"><span class="gap-icon">⚠️</span>ギャップ①：法人向け案件への非従事</h3>
+                        <p class="text-gray-700" style="color: #073B4C;">現在所属するCOINJINJA社では、法人向け事業の新規開拓を一時停止中（市場環境の変化により法人NFT事業ニーズが減少）。</p>
+                        <p class="mt-1 text-gray-700" style="color: #073B4C;">現在は新規toC向けサービスの企画や資金調達を行っているが、正直あまり楽しくない状況。</p>
+                    </div>
+                    <div class="p-4 border rounded-lg" style="border-color: #FFBF69;">
+                        <h3 class="text-lg font-semibold mb-2 flex items-center" style="color: #540D6E;"><span class="gap-icon">⚠️</span>ギャップ②：経験・能力・箔の不足</h3>
+                        <p class="text-gray-700" style="color: #073B4C;">目指すキャリアパスにおいて、さらなる経験、能力の向上、そして市場からの信頼性（箔）が必要だと感じている。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="key-questions">
+            <h2 class="text-2xl md:text-3xl font-bold section-title mb-6 pb-2">5. ご意見を伺いたいこと</h2>
+            <div class="card">
+                <p class="mb-6 text-gray-700" style="color: #073B4C;">上記の現状と目指す方向性を踏まえ、以下の点についてご意見やアドバイスを頂戴できれば幸いです。</p>
+                <ul class="space-y-3">
+                    <li class="flex items-start">
+                        <span class="question-icon mt-1">❓</span>
+                        <div>
+                            <strong class="text-lg" style="color: #540D6E;">キャリアの行く先は正しいか？</strong>
+                            <p class="text-gray-700" style="color: #073B4C;">特に「外資ITスタートアップの日本市場進出支援」という領域で、実際に活動している人は他にいるのでしょうか。</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="question-icon mt-1">❓</span>
+                        <div>
+                            <strong class="text-lg" style="color: #540D6E;">キャリアの方向性は正しいか？</strong>
+                            <p class="text-gray-700" style="color: #073B4C;">今の方向性で、「ソフトウェアを用いたクライアントワークを担う人」として差別化していけそうでしょうか</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="question-icon mt-1">❓</span>
+                        <div>
+                            <strong class="text-lg" style="color: #540D6E;">次のステップとして最適な環境は？</strong>
+                            <p class="text-gray-700" style="color: #073B4C;">このようなキャリアの方向性で成長していくためには、次にどのような特徴を持つ会社で経験を積むのが良いでしょうか。</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+
+    </div>
+
+    <script>
+        function wrapLabels(label, maxWidth) {
+            if (typeof label !== 'string') return [String(label)]; // Ensure label is a string
+            const words = label.split(' ');
+            const lines = [];
+            let currentLine = '';
+            for (const word of words) {
+                if ((currentLine + ' ' + word).trim().length > maxWidth && currentLine.length > 0) {
+                    lines.push(currentLine);
+                    currentLine = word;
+                } else {
+                    currentLine = (currentLine + ' ' + word).trim();
+                }
+            }
+            if (currentLine.length > 0) {
+                lines.push(currentLine);
+            }
+            return lines.length > 0 ? lines : [label];
+        }
+
+        const commonChartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        title: function(tooltipItems) {
+                            const item = tooltipItems[0];
+                            if (!item || !item.chart || !item.chart.data || !item.chart.data.labels) return '';
+                            let label = item.chart.data.labels[item.dataIndex];
+                            if (Array.isArray(label)) {
+                              return label.join(' ');
+                            } else {
+                              return label;
+                            }
+                        }
+                    }
+                },
+                legend: {
+                    labels: {
+                        color: '#073B4C' // Main text color for legend
+                    }
+                }
+            },
+            scales: {
+                x: { // For Bar chart
+                    ticks: { color: '#073B4C' },
+                    grid: { display: false }
+                },
+                y: { // For Bar chart
+                    ticks: { color: '#073B4C' },
+                    grid: { color: 'rgba(7, 59, 76, 0.1)' },
+                    title: {
+                        display: true,
+                        text: '金額 (億円)',
+                        color: '#073B4C'
+                    }
+                }
+            }
+        };
+        
+        // COINJINJA Performance Chart (Grouped Bar)
+        const coinjinjaCtx = document.getElementById('coinjinjaPerformanceChart').getContext('2d');
+        new Chart(coinjinjaCtx, {
+            type: 'bar',
+            data: {
+                labels: ['初年度 (実績)', '次年度 (実績)'],
+                datasets: [
+                    {
+                        label: '売上 (億円)',
+                        data: [1, 3],
+                        backgroundColor: '#FF9F1C', // Orange
+                        borderColor: '#E68A00',
+                        borderWidth: 1
+                    },
+                    {
+                        label: '利益 (億円)',
+                        data: [0.1, 0.4], // 1000万円 = 0.1億円, 4000万円 = 0.4億円
+                        backgroundColor: '#2EC4B6', // Teal
+                        borderColor: '#1E9A8F',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                ...commonChartOptions,
+                scales: {
+                    x: { 
+                        ticks: { color: '#073B4C', font: {size: 12} },
+                        grid: { display: false }
+                    },
+                    y: { 
+                        ticks: { color: '#073B4C' },
+                        grid: { color: 'rgba(7, 59, 76, 0.1)' },
+                        title: {
+                            display: true,
+                            text: '金額 (億円)',
+                            color: '#073B4C',
+                            font: {size: 14, weight: 'bold'}
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
